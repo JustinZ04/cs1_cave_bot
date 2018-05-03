@@ -23,16 +23,21 @@ def parse():
     if ws['A3'].value == '8:30':
         print('matched')
 
+    #  I think this is a better way
+    s = str(ws['A3'].value)
+    s = s[:4]
+    s = s.replace(":", "")
+    print(s)
+
     #  I really hope you know a better way to do this or
     #  no one is ever going to be able to see this code
-    s = str(ws['A3'].value)
-    s = s.replace(":", "")
-    s = s.replace(" - ", "")
-    s = s.replace("A", "")
-    s = s.replace("P", "")
-    s = s.replace("M", "")
-    s = s[3:]
-    print(s)
+    #  s = s.replace(":", "")
+    #  s = s.replace(" - ", "")
+    #  s = s.replace("A", "")
+    #  s = s.replace("P", "")
+    #  s = s.replace("M", "")
+    #  s = s[3:]
+    #  print(s)
 
 
 if __name__ == '__main__':
