@@ -5,21 +5,40 @@ import calendar
 
 
 def parse():
+    weekday_dict = {'Monday': 'E', 'Tuesday': 'K', 'Wednesday': 'R', 'Thursday': 'X', 'Friday': 'AD'}
     time_list = []
     str_time_list = []
     wb = load_workbook(filename='office_hours.xlsx', data_only=True)
-    ws = wb.active
+    print(wb.sheetnames)
+    ws = wb['Office Hours (Deprecated)']
+    # print(ws['P15'].value)
 
     # Get the current weekday
     day = date.today()
     cur_time = time.localtime()
     cur_time = time.strftime("%H%M", cur_time)
+    if int(cur_time) > 1200:
+        cur_time = str(int(cur_time) - 1200)
 
-    for cell in ws.iter_cols(min_col=0, max_col=1, min_row=3, max_row=27):
-        continue
+    #  Will probably have to edit min/max row for each spreadsheet
+    for col in ws.iter_cols(min_col=0, max_col=1, min_row=5, max_row=43):
+        for cell in col:
+            if str(cell.value) != "None":
+                s = str(cell.value)
+                print(s)
+                s = s.split(' - ')
+                s[0] = s[0].replace(":", "")
+                s[1] = s[1].replace(":", "")
+                s[1] = s[1].replace(" AM", "")
+                s[1] = s[1].replace(" PM", "")
 
-    print(cell)
-    for i in range(25):
+                if abs(420 - int(s[0])) < 30:
+                    print(cell.row)
+                    break
+
+    print(ws['BV25'].internal_value)
+    #  Will probably have to edit this for each spreadsheet
+'''    for i in range(25):
         s = str(cell[i].value)
         # print(s)
 
@@ -39,9 +58,10 @@ def parse():
     not_found = True
     i = 0
     while not_found:
-        if abs(355- int(time_list[i][0])) < 30:
+        if abs(355 - int(time_list[i][0])) < 30:
             not_found = False
             print(time_list[i])
+            #  Will probably have to edit these for each spreadsheet
             if 15 <= i < 20:
                 correct_row = i + 4
                 print("entering first if")
@@ -55,44 +75,26 @@ def parse():
         else:
             i = i + 1
     print(correct_row)
-
-
-    print(type(cur_time))
-    weekday = calendar.day_name[day.weekday()]
-    print(weekday)
+'''
+#    print(type(cur_time))
+#    weekday = calendar.day_name[day.weekday()]
+    #  print(weekday)
 
     # Search through the first few cells to find the correct column
+    #  Will probably have to edit this for each spreadsheet
+'''
     for cell in ws.iter_cols(min_col=0, max_col=31, min_row=0, max_row=2):
         #  print(cell[1].value)
         #  print(cell)
         if cell[1].value == weekday:
-            print(cell[1].value)
-
-    #  I think this is a better way
-    s = str(ws['A3'].value)
-    s = s.split(' - ')
-    print(s)
+            print("cell 1" + str(cell[1]))
 
     s[0] = s[0].replace(":", "")
     s[1] = s[1].replace(":", "")
     s[1] = s[1].replace(" AM", "")
     s[1] = s[1].replace(" PM", "")
     print(s)
-
-    #  s = s[:4]
-    #  s = s.replace(":", "")
-    #  print(s)
-
-    #  I really hope you know a better way to do this or
-    #  no one is ever going to be able to see this code
-    #  s = s.replace(":", "")
-    #  s = s.replace(" - ", "")
-    #  s = s.replace("A", "")
-    #  s = s.replace("P", "")
-    #  s = s.replace("M", "")
-    #  s = s[3:]
-    #  print(s)
-
+'''
 
 if __name__ == '__main__':
     parse()
