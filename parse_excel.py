@@ -24,11 +24,9 @@ def parse():
         # print(s)
 
         if s != "None":
-            print(s)
+            #  print(s)
             s = s.split(' - ')
-        #  print(len(s))
             s[0] = s[0].replace(":", "")
-        #  print(s[1])
             s[1] = s[1].replace(":", "")
             s[1] = s[1].replace(" AM", "")
             s[1] = s[1].replace(" PM", "")
@@ -37,6 +35,27 @@ def parse():
 
     if int(cur_time) > 1200:
         cur_time = str(int(cur_time) - 1200)
+
+    not_found = True
+    i = 0
+    while not_found:
+        if abs(355- int(time_list[i][0])) < 30:
+            not_found = False
+            print(time_list[i])
+            if 15 <= i < 20:
+                correct_row = i + 4
+                print("entering first if")
+            elif 20 <= i:
+                print("entering second if")
+                correct_row = i + 5
+            else:
+                print("entering third if")
+                correct_row = i + 3
+
+        else:
+            i = i + 1
+    print(correct_row)
+
 
     print(type(cur_time))
     weekday = calendar.day_name[day.weekday()]
