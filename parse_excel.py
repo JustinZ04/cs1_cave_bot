@@ -1,11 +1,17 @@
 from openpyxl import load_workbook
+from openpyxl.utils import coordinate_from_string, column_index_from_string
 from datetime import date
 import time
 import calendar
 
 
+
 def parse():
-    weekday_dict = {'Monday': 'E', 'Tuesday': 'K', 'Wednesday': 'R', 'Thursday': 'X', 'Friday': 'AD'}
+    weekday_dict = {'Monday': ('B', 'Q'), 'Tuesday': ('S', 'AI'), 'Wednesday': ('AK', 'AZ'), 'Thursday': ('BB', 'BP'),
+                    'Friday': ('BR', 'CH')}
+    temp = weekday_dict['Monday']
+    temp3 = column_index_from_string(temp[0])
+    print(temp3)
     time_list = []
     str_time_list = []
     wb = load_workbook(filename='office_hours.xlsx', data_only=True)
@@ -15,6 +21,8 @@ def parse():
 
     # Get the current weekday
     day = date.today()
+    weekday = calendar.day_name[day.weekday()]
+    print(weekday)
     cur_time = time.localtime()
     cur_time = time.strftime("%H%M", cur_time)
     if int(cur_time) > 1200:
@@ -32,12 +40,14 @@ def parse():
                 s[1] = s[1].replace(" AM", "")
                 s[1] = s[1].replace(" PM", "")
 
-                if abs(420 - int(s[0])) < 30:
+                if abs(435 - int(s[0])) < 30:
                     print(cell.row)
                     break
 
     print(ws['BV25'].internal_value)
     #  Will probably have to edit this for each spreadsheet
+
+
 '''    for i in range(25):
         s = str(cell[i].value)
         # print(s)
@@ -77,11 +87,10 @@ def parse():
     print(correct_row)
 '''
 #    print(type(cur_time))
-#    weekday = calendar.day_name[day.weekday()]
-    #  print(weekday)
+#
 
-    # Search through the first few cells to find the correct column
-    #  Will probably have to edit this for each spreadsheet
+# Search through the first few cells to find the correct column
+#  Will probably have to edit this for each spreadsheet
 '''
     for cell in ws.iter_cols(min_col=0, max_col=31, min_row=0, max_row=2):
         #  print(cell[1].value)
