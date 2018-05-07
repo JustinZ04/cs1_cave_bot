@@ -16,7 +16,7 @@ def parse():
     # Get the current weekday
     day = date.today()
     weekday = calendar.day_name[day.weekday()]
-    noon_flag = False
+    # noon_flag = False
     # add a return here so we don't keep going
     if weekday == 'Saturday' or 'Sunday':
         print('No TAs have office hours at this time!')
@@ -24,9 +24,10 @@ def parse():
     print(weekday)
     cur_time = time.localtime()
     cur_time = time.strftime("%H%M", cur_time)
-    if int(cur_time) >= 1200:
-        noon_flag = True
-    print('Current time is ' + cur_time)
+    cur_time = int(cur_time)
+    #  if int(cur_time) >= 1200:
+    #  noon_flag = True
+    print('Current time is ' + str(cur_time))
     time_range = None
     #  Will probably have to edit min/max row for each spreadsheet
     for col in ws.iter_cols(min_col=0, max_col=1, min_row=5, max_row=43):
@@ -40,10 +41,10 @@ def parse():
                 s[1] = s[1].replace(" AM", "")
                 s[1] = s[1].replace(" PM", "")
 
-                if (1201 > 1259):  # curtime here
-                    temp = 1500 - 1200  # curtime
+                if cur_time > 1259:  # curtime here
+                    temp = cur_time - 1200  # curtime
                 else:
-                    temp = 1201  # curtime
+                    temp = cur_time  # curtime
                 if abs(temp - int(s[0])) < 30:
                     print(cell.row)
                     time_range = cell.row
@@ -53,8 +54,8 @@ def parse():
         return
     found_ta = False
     #  Will probably have to edit this for each spreadsheet
-    for col in ws.iter_cols(min_col=column_index_from_string((weekday_dict['Friday'])[0]),  # weekday here
-                            max_col=column_index_from_string((weekday_dict['Friday'])[1]), min_row=5,
+    for col in ws.iter_cols(min_col=column_index_from_string((weekday_dict[weekday])[0]),  # weekday here
+                            max_col=column_index_from_string((weekday_dict[weekday])[1]), min_row=5,
                             max_row=time_range):
         for cell in col:
             if str(cell.value) != "None":
@@ -70,13 +71,13 @@ def parse():
 
                         office_hour[0] = office_hour[0].replace(":", "")
                         office_hour[1] = office_hour[1].replace(":", "")
-                        if (int(office_hour[0]) < 900):  # might need to change for new lower TA hour bound
+                        if int(office_hour[0]) < 900:  # might need to change for new lower TA hour bound
                             office_hour[0] = str(int(office_hour[0]) + 1200)
 
-                        if (int(office_hour[1]) < 900):  # might need to change for new lower TA hour bound
+                        if int(office_hour[1]) < 900:  # might need to change for new lower TA hour bound
                             office_hour[1] = str(int(office_hour[1]) + 1200)
 
-                        if int(office_hour[0]) <= 1201 < int(office_hour[1]):  # curtime here
+                        if int(office_hour[0]) <= cur_time < int(office_hour[1]):  # curtime here
                             print(cell.value)
                             found_ta = True
 
