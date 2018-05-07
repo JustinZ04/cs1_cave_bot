@@ -69,15 +69,15 @@ def parse():
                     if len(office_hour) > 0:
                         office_hour = office_hour[0].split(' - ')
 
-                        office_hour[0] = office_hour[0].replace(":", "")
-                        office_hour[1] = office_hour[1].replace(":", "")
-                        if int(office_hour[0]) < 900:  # might need to change for new lower TA hour bound
-                            office_hour[0] = str(int(office_hour[0]) + 1200)
+                        office_hour[0] = int(office_hour[0].replace(":", ""))
+                        office_hour[1] = int(office_hour[1].replace(":", ""))
+                        if office_hour[0] < 900:  # might need to change for new lower TA hour bound
+                            office_hour[0] = office_hour[0]) + 1200
 
-                        if int(office_hour[1]) < 900:  # might need to change for new lower TA hour bound
-                            office_hour[1] = str(int(office_hour[1]) + 1200)
+                        if office_hour[1] < 900:  # might need to change for new lower TA hour bound
+                            office_hour[1] = office_hour[1] + 1200
 
-                        if int(office_hour[0]) <= cur_time < int(office_hour[1]):  # curtime here
+                        if office_hour[0] <= cur_time < office_hour[1]:  # curtime here
                             print(cell.value)
                             found_ta = True
 
