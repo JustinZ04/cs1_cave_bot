@@ -25,6 +25,11 @@ def parse():
     cur_time = time.localtime()
     cur_time = time.strftime("%H%M", cur_time)
     cur_time = int(cur_time)
+
+    if cur_time < 900 or cur_time > 2100:
+        print("No office hours.")
+        return
+    
     #  if int(cur_time) >= 1200:
     #  noon_flag = True
     print('Current time is ' + str(cur_time))
