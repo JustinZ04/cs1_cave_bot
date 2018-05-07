@@ -72,7 +72,7 @@ def parse():
                         office_hour[0] = int(office_hour[0].replace(":", ""))
                         office_hour[1] = int(office_hour[1].replace(":", ""))
                         if office_hour[0] < 900:  # might need to change for new lower TA hour bound
-                            office_hour[0] = office_hour[0]) + 1200
+                            office_hour[0] = office_hour[0] + 1200
 
                         if office_hour[1] < 900:  # might need to change for new lower TA hour bound
                             office_hour[1] = office_hour[1] + 1200
