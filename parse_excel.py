@@ -3,31 +3,31 @@ from openpyxl.utils import coordinate_from_string, column_index_from_string
 from datetime import date
 import time
 import calendar
-
+import re
 
 
 def parse():
     weekday_dict = {'Monday': ('B', 'Q'), 'Tuesday': ('S', 'AI'), 'Wednesday': ('AK', 'AZ'), 'Thursday': ('BB', 'BP'),
                     'Friday': ('BR', 'CH')}
-    temp = weekday_dict['Monday']
-    temp3 = column_index_from_string(temp[0])
-    print(temp3)
-    time_list = []
-    str_time_list = []
     wb = load_workbook(filename='office_hours.xlsx', data_only=True)
-    print(wb.sheetnames)
     ws = wb['Office Hours (Deprecated)']
     # print(ws['P15'].value)
 
     # Get the current weekday
     day = date.today()
     weekday = calendar.day_name[day.weekday()]
+    noon_flag = False
+    # add a return here so we don't keep going
+    if weekday == 'Saturday' or 'Sunday':
+        print('No TAs have office hours at this time!')
+    # return
     print(weekday)
     cur_time = time.localtime()
     cur_time = time.strftime("%H%M", cur_time)
-    if int(cur_time) > 1200:
-        cur_time = str(int(cur_time) - 1200)
-
+    if int(cur_time) >= 1200:
+        noon_flag = True
+    print('Current time is ' + cur_time)
+    time_range = None
     #  Will probably have to edit min/max row for each spreadsheet
     for col in ws.iter_cols(min_col=0, max_col=1, min_row=5, max_row=43):
         for cell in col:
@@ -40,12 +40,49 @@ def parse():
                 s[1] = s[1].replace(" AM", "")
                 s[1] = s[1].replace(" PM", "")
 
-                if abs(435 - int(s[0])) < 30:
+                if(1201 > 1259): #curtime here
+                    temp = 1500 - 1200 #curtime
+                else:
+                    temp = 1201 #curtime
+                if abs(temp- int(s[0])) < 30:
                     print(cell.row)
+                    time_range = cell.row
                     break
-
-    print(ws['BV25'].internal_value)
+    if time_range is None:
+        print('No TAs have office hours at this time!')
+        return
+    found_ta = False
     #  Will probably have to edit this for each spreadsheet
+    for col in ws.iter_cols(min_col=column_index_from_string((weekday_dict['Friday'])[0]),
+                            max_col=column_index_from_string((weekday_dict['Friday'])[1]), min_row=5,
+                            max_row=time_range):
+        for cell in col:
+            if str(cell.value) != "None":
+                s = str(cell.value)
+                # print(s)
+                office_hour = re.findall(r'\d?\d:\d{2} - \d?\d:\d{2}', s)
+                if re.findall(r'Lecture', s):
+                    office_hour = None
+                if office_hour is not None:
+
+                    if len(office_hour) > 0:
+                        office_hour = office_hour[0].split(' - ')
+
+                        office_hour[0] = office_hour[0].replace(":", "")
+                        office_hour[1] = office_hour[1].replace(":", "")
+                        if(int(office_hour[0]) < 900):
+                            office_hour[0] = str(int(office_hour[0]) + 1200)
+
+                        if (int(office_hour[1]) < 900):
+                            office_hour[1] = str(int(office_hour[1]) + 1200)
+
+
+                        if int(office_hour[0]) <= 1201 < int(office_hour[1]):
+                            print(cell.value)
+                            found_ta = True
+
+    if not found_ta:
+        print("No TAs have office hours at this time!")
 
 
 '''    for i in range(25):
