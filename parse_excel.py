@@ -40,11 +40,11 @@ def parse():
                 s[1] = s[1].replace(" AM", "")
                 s[1] = s[1].replace(" PM", "")
 
-                if(1201 > 1259): #curtime here
-                    temp = 1500 - 1200 #curtime
+                if (1201 > 1259):  # curtime here
+                    temp = 1500 - 1200  # curtime
                 else:
-                    temp = 1201 #curtime
-                if abs(temp- int(s[0])) < 30:
+                    temp = 1201  # curtime
+                if abs(temp - int(s[0])) < 30:
                     print(cell.row)
                     time_range = cell.row
                     break
@@ -53,7 +53,7 @@ def parse():
         return
     found_ta = False
     #  Will probably have to edit this for each spreadsheet
-    for col in ws.iter_cols(min_col=column_index_from_string((weekday_dict['Friday'])[0]),
+    for col in ws.iter_cols(min_col=column_index_from_string((weekday_dict['Friday'])[0]),  # weekday here
                             max_col=column_index_from_string((weekday_dict['Friday'])[1]), min_row=5,
                             max_row=time_range):
         for cell in col:
@@ -70,14 +70,13 @@ def parse():
 
                         office_hour[0] = office_hour[0].replace(":", "")
                         office_hour[1] = office_hour[1].replace(":", "")
-                        if(int(office_hour[0]) < 900):
+                        if (int(office_hour[0]) < 900):  # might need to change for new lower TA hour bound
                             office_hour[0] = str(int(office_hour[0]) + 1200)
 
-                        if (int(office_hour[1]) < 900):
+                        if (int(office_hour[1]) < 900):  # might need to change for new lower TA hour bound
                             office_hour[1] = str(int(office_hour[1]) + 1200)
 
-
-                        if int(office_hour[0]) <= 1201 < int(office_hour[1]):
+                        if int(office_hour[0]) <= 1201 < int(office_hour[1]):  # curtime here
                             print(cell.value)
                             found_ta = True
 
