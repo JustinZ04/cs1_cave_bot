@@ -1,7 +1,16 @@
+''' This code was taken from this stack overflow post:
+https://stackoverflow.com/questions/44012089/google-drive-api-v3-download-google-spreadsheet-as-excel
+which also uses code from the Google Drive API python quickstart guide found here:
+https://developers.google.com/drive/v3/web/quickstart/python
+'''
+
 import httplib2
 import os
 import time
+import config
+from twilio.rest import Client
 
+from datetime import datetime
 from apiclient import discovery
 from oauth2client import client
 from oauth2client import tools
@@ -51,24 +60,28 @@ def get_credentials():
 
 
 def main():
-    """Shows basic usage of the Google Drive API.
- 
-   Creates a Google Drive API service object and outputs the names and IDs
-   for up to 10 files.
-   """
-
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('drive', 'v3', http=http)
 
-    file_id = '1EhiCKIQ2I3pQgU4VZPzva3W1DdmSLWRnSC-Kx-KCQ7o'
+    file_id = config.cs1_id
 
     request = service.files().export_media(fileId=file_id,
                                            mimeType='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
-    while (True):
-        with open('office_hours.xlsx', 'wb') as f:
-            f.write(request.execute())
+    while True:
+        try:
+            with open('office_hours.xlsx', 'wb') as f:
+                f.write(request.execute())
+
+        except Exception:
+            cur_time = datetime.now().time()
+            file = open("logs/download.log", "a")
+            file.write(str(cur_time) + " Download Failed\n")
+            file.close()
+            c = Client(config.sms_sid, config.sms_token)
+            c.messages.create(body='The spreadsheet didn''t download', from_=+14078900127, to=+14076922679)
+            c.messages.create(body='The spreadsheet didn''t download', from_=+14078900127, to=+18639566443)
 
         time.sleep(60 * 60 * 6)  # Download file every 6 hours
 

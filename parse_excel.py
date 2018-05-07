@@ -1,16 +1,26 @@
 from openpyxl import load_workbook
-from openpyxl.utils import coordinate_from_string, column_index_from_string
-from datetime import date
+from openpyxl.utils import column_index_from_string
+from datetime import date, datetime
 import time
 import calendar
 import re
 
 
 def parse():
+    stime = datetime.now().time()
+    file = open("times.log", "a")
+    file.write(str(stime) + "\n")
+    file.close()
+
     weekday_dict = {'Monday': ('B', 'Q'), 'Tuesday': ('S', 'AI'), 'Wednesday': ('AK', 'AZ'), 'Thursday': ('BB', 'BP'),
                     'Friday': ('BR', 'CH')}
     wb = load_workbook(filename='office_hours.xlsx', data_only=True)
-    ws = wb['Office Hours (Deprecated)']
+    etime = datetime.now().time()
+    file = open("times.log", "a")
+    file.write(str(etime) + "\n")
+    file.close()
+    ws = wb['Office Hours']  # Will have to change the name of the worksheet each time
+    ta_list = []
     # print(ws['P15'].value)
 
     # Get the current weekday
@@ -18,23 +28,27 @@ def parse():
     weekday = calendar.day_name[day.weekday()]
     # noon_flag = False
     # add a return here so we don't keep going
-    if weekday == 'Saturday' or 'Sunday':
-        print('No TAs have office hours at this time!')
-    # return
     print(weekday)
+    if weekday == 'Saturday' or weekday == 'Sunday':
+        print('---No TAs have office hours at this time!')
+        return None
+
+
     cur_time = time.localtime()
     cur_time = time.strftime("%H%M", cur_time)
     cur_time = int(cur_time)
 
     if cur_time < 900 or cur_time > 2100:
         print("No office hours.")
-        return
-    
+        return None
+
     #  if int(cur_time) >= 1200:
     #  noon_flag = True
     print('Current time is ' + str(cur_time))
     time_range = None
     #  Will probably have to edit min/max row for each spreadsheet
+
+
     for col in ws.iter_cols(min_col=0, max_col=1, min_row=5, max_row=43):
         for cell in col:
             if str(cell.value) != "None":
@@ -55,10 +69,16 @@ def parse():
                     time_range = cell.row
                     break
     if time_range is None:
-        print('No TAs have office hours at this time!')
-        return
+        print('+++No TAs have office hours at this time!')
+        return None
+
+
+
     found_ta = False
     #  Will probably have to edit this for each spreadsheet
+
+
+
     for col in ws.iter_cols(min_col=column_index_from_string((weekday_dict[weekday])[0]),  # weekday here
                             max_col=column_index_from_string((weekday_dict[weekday])[1]), min_row=5,
                             max_row=time_range):
@@ -83,69 +103,19 @@ def parse():
                             office_hour[1] = office_hour[1] + 1200
 
                         if office_hour[0] <= cur_time < office_hour[1]:  # curtime here
-                            print(cell.value)
+                            ta_list.append(cell.value)
                             found_ta = True
+
+
 
     if not found_ta:
         print("No TAs have office hours at this time!")
+        return None
 
 
-'''    for i in range(25):
-        s = str(cell[i].value)
-        # print(s)
 
-        if s != "None":
-            #  print(s)
-            s = s.split(' - ')
-            s[0] = s[0].replace(":", "")
-            s[1] = s[1].replace(":", "")
-            s[1] = s[1].replace(" AM", "")
-            s[1] = s[1].replace(" PM", "")
-            time_list.append(s)
-    print(time_list)
+    return ta_list
 
-    if int(cur_time) > 1200:
-        cur_time = str(int(cur_time) - 1200)
-
-    not_found = True
-    i = 0
-    while not_found:
-        if abs(355 - int(time_list[i][0])) < 30:
-            not_found = False
-            print(time_list[i])
-            #  Will probably have to edit these for each spreadsheet
-            if 15 <= i < 20:
-                correct_row = i + 4
-                print("entering first if")
-            elif 20 <= i:
-                print("entering second if")
-                correct_row = i + 5
-            else:
-                print("entering third if")
-                correct_row = i + 3
-
-        else:
-            i = i + 1
-    print(correct_row)
-'''
-#    print(type(cur_time))
-#
-
-# Search through the first few cells to find the correct column
-#  Will probably have to edit this for each spreadsheet
-'''
-    for cell in ws.iter_cols(min_col=0, max_col=31, min_row=0, max_row=2):
-        #  print(cell[1].value)
-        #  print(cell)
-        if cell[1].value == weekday:
-            print("cell 1" + str(cell[1]))
-
-    s[0] = s[0].replace(":", "")
-    s[1] = s[1].replace(":", "")
-    s[1] = s[1].replace(" AM", "")
-    s[1] = s[1].replace(" PM", "")
-    print(s)
-'''
 
 if __name__ == '__main__':
     parse()
