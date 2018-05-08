@@ -1,5 +1,5 @@
 from openpyxl import load_workbook
-from openpyxl.utils import column_index_from_string
+from openpyxl.utils import get_column_letter, column_index_from_string
 from datetime import date, datetime
 import time
 import calendar
@@ -14,14 +14,11 @@ def parse():
 
     weekday_dict = {'Monday': ('B', 'Q'), 'Tuesday': ('S', 'AI'), 'Wednesday': ('AK', 'AZ'), 'Thursday': ('BB', 'BP'),
                     'Friday': ('BR', 'CH')}
-    wb = load_workbook(filename='office_hours.xlsx', data_only=True)
-    etime = datetime.now().time()
-    file = open("times.log", "a")
-    file.write(str(etime) + "\n")
-    file.close()
+    wb = load_workbook(filename='office_hours.xlsx', data_only=True, read_only=True)
+
     ws = wb['Office Hours']  # Will have to change the name of the worksheet each time
     ta_list = []
-    # print(ws['P15'].value)
+    print(ws['J22'].value)
 
     # Get the current weekday
     day = date.today()
@@ -32,7 +29,6 @@ def parse():
     if weekday == 'Saturday' or weekday == 'Sunday':
         print('---No TAs have office hours at this time!')
         return None
-
 
     cur_time = time.localtime()
     cur_time = time.strftime("%H%M", cur_time)
@@ -48,74 +44,90 @@ def parse():
     time_range = None
     #  Will probably have to edit min/max row for each spreadsheet
 
+    for j in range(5, 43):
+        cell = str(get_column_letter(1) + str(j))
+       # print(cell)
+        if str(ws[cell].value) != "None":
+            s = str(ws[cell].value)
+           # print(s)
+            s = s.split(' - ')
+            s[0] = s[0].replace(":", "")
+            s[1] = s[1].replace(":", "")
+            s[1] = s[1].replace(" AM", "")
+            s[1] = s[1].replace(" PM", "")
 
-    for col in ws.iter_cols(min_col=0, max_col=1, min_row=5, max_row=43):
-        for cell in col:
-            if str(cell.value) != "None":
-                s = str(cell.value)
-                print(s)
-                s = s.split(' - ')
-                s[0] = s[0].replace(":", "")
-                s[1] = s[1].replace(":", "")
-                s[1] = s[1].replace(" AM", "")
-                s[1] = s[1].replace(" PM", "")
+            if cur_time > 1259:  # curtime here
+                temp = cur_time - 1200  # curtime
+            else:
+                temp = cur_time  # curtime
+            if abs(temp - int(s[0])) < 30:
+                print(ws[cell].row)
+                time_range = ws[cell].row
+                break
 
-                if cur_time > 1259:  # curtime here
-                    temp = cur_time - 1200  # curtime
-                else:
-                    temp = cur_time  # curtime
-                if abs(temp - int(s[0])) < 30:
-                    print(cell.row)
-                    time_range = cell.row
-                    break
     if time_range is None:
         print('+++No TAs have office hours at this time!')
         return None
 
-
-
     found_ta = False
     #  Will probably have to edit this for each spreadsheet
 
+    cur_time = 1515
+    seen_ta = {}
+    for i in range(column_index_from_string((weekday_dict[weekday])[0]),
+                   column_index_from_string((weekday_dict[weekday])[1])):
+        for j in range(5, time_range):
+            cell = str(get_column_letter(i) + str(j))
 
+            if type(ws[cell].value) is not str:
+                continue
 
-    for col in ws.iter_cols(min_col=column_index_from_string((weekday_dict[weekday])[0]),  # weekday here
-                            max_col=column_index_from_string((weekday_dict[weekday])[1]), min_row=5,
-                            max_row=time_range):
-        for cell in col:
-            if str(cell.value) != "None":
-                s = str(cell.value)
-                # print(s)
-                office_hour = re.findall(r'\d?\d:\d{2} - \d?\d:\d{2}', s)
+            if str(ws[cell].value) != "None":
+                s = str(ws[cell].value)
+
                 if re.findall(r'Lecture', s):
-                    office_hour = None
-                if office_hour is not None:
+                    continue
 
-                    if len(office_hour) > 0:
-                        office_hour = office_hour[0].split(' - ')
+                if s in seen_ta:
+                    continue
+                else:
+                    seen_ta[s] = 1
 
-                        office_hour[0] = int(office_hour[0].replace(":", ""))
-                        office_hour[1] = int(office_hour[1].replace(":", ""))
-                        if office_hour[0] < 900:  # might need to change for new lower TA hour bound
-                            office_hour[0] = office_hour[0] + 1200
 
-                        if office_hour[1] < 900:  # might need to change for new lower TA hour bound
-                            office_hour[1] = office_hour[1] + 1200
+           # print(s)
 
-                        if office_hour[0] <= cur_time < office_hour[1]:  # curtime here
-                            ta_list.append(cell.value)
-                            found_ta = True
+            office_hour = re.findall(r'\d?\d:\d{2} - \d?\d:\d{2}', s)
 
+            if office_hour is not None:
+                if len(office_hour) > 0:
+                    office_hour = office_hour[0].split(' - ')
+
+                    office_hour[0] = int(office_hour[0].replace(":", ""))
+                    office_hour[1] = int(office_hour[1].replace(":", ""))
+                    if office_hour[0] < 900:  # might need to change for new lower TA hour bound
+                        office_hour[0] = office_hour[0] + 1200
+
+                    if office_hour[1] < 900:  # might need to change for new lower TA hour bound
+                        office_hour[1] = office_hour[1] + 1200
+
+                    if office_hour[0] <= cur_time < office_hour[1]:  # curtime here
+                        ta_list.append(ws[cell].value)
+                        found_ta = True
 
 
     if not found_ta:
         print("No TAs have office hours at this time!")
         return None
 
+    print(len(ta_list))
 
+
+    etime = datetime.now().time()
+    file = open("times.log", "a")
+    file.write(str(etime) + "\n")
+    file.close()
 
     return ta_list
-
 
 if __name__ == '__main__':
     parse()
