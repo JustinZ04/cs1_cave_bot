@@ -86,7 +86,7 @@ def parse():
             cell = "".join((col, row))
 
 
-            print(cell)
+           # print(cell)
             s = ws[cell].value
             if type(s) is not str:
                 continue
@@ -119,8 +119,8 @@ def parse():
         print("No TAs have office hours at this time!")
         return None
 
-    print(len(ta_list))
-    print(str(ta_list))
+   # print(len(ta_list))
+   # print(str(ta_list))
 
     etime = datetime.now().time()
     file = open("times.log", "a")
