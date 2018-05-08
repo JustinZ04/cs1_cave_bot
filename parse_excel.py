@@ -9,8 +9,8 @@ import re
 def parse():
 
 
-    weekday_dict = {'Monday': ('B', 'Q'), 'Tuesday': ('S', 'AI'), 'Wednesday': ('AK', 'AZ'), 'Thursday': ('BB', 'BP'),
-                    'Friday': ('BR', 'CH')}
+    weekday_dict = {'Monday': ('B', 'N'), 'Tuesday': ('S', 'AH'), 'Wednesday': ('AK', 'AW'), 'Thursday': ('BB', 'BO'),
+                    'Friday': ('BR', 'CD')}
     wb = load_workbook(filename='office_hours.xlsx', data_only=True, read_only=True)
 
     ws = wb['Office Hours']  # Will have to change the name of the worksheet each time
@@ -22,7 +22,7 @@ def parse():
     weekday = calendar.day_name[day.weekday()]
     # noon_flag = False
     # add a return here so we don't keep going
-    print(weekday)
+   # print(weekday)
     if weekday == 'Saturday' or weekday == 'Sunday':
         print('---No TAs have office hours at this time!')
         return None
@@ -38,7 +38,7 @@ def parse():
 
     #  if int(cur_time) >= 1200:
     #  noon_flag = True
-    print('Current time is ' + str(cur_time))
+   # print('Current time is ' + str(cur_time))
     time_range = None
     #  Will probably have to edit min/max row for each spreadsheet
 
@@ -61,7 +61,7 @@ def parse():
             else:
                 temp = cur_time  # curtime
             if abs(temp - int(s[0])) < 30:
-                print(ws[cell].row)
+              #  print(ws[cell].row)
                 time_range = ws[cell].row
                 break
 
@@ -72,24 +72,30 @@ def parse():
     found_ta = False
     #  Will probably have to edit this for each spreadsheet
 
-   # cur_time = 1515
+    cur_time = 1515
     seen_ta = {}
     stime = datetime.now().time()
     file = open("times.log", "a")
     file.write(str(stime) + "\n")
     file.close()
+
     for i in range(column_index_from_string((weekday_dict[weekday])[0]),
                    column_index_from_string((weekday_dict[weekday])[1])+1):
-        for j in range(5, time_range+1):
+        for j in range(time_range, 4, -1):
             col = get_column_letter(i)
             row = str(j)
             cell = "".join((col, row))
 
 
-           # print(cell)
+            #print(cell)
             s = ws[cell].value
-            if type(s) is not str:
+           # print(type(s))
+            #print(s)
+            if s is None:
+               # print("none")
                 continue
+           # if type(s) is not str:
+            #    continue
 
 
 
@@ -113,8 +119,9 @@ def parse():
                     if office_hour[0] <= cur_time < office_hour[1]:  # curtime here
                         ta_list.append(ws[cell].value)
                         found_ta = True
+                        #print("found ta")
+                        break
 
-    
     if not found_ta:
         print("No TAs have office hours at this time!")
         return None
