@@ -20,7 +20,7 @@ async def on_ready():
 async def on_message(message):
     if message.content.startswith('!cave'):
         ta_list = parse()
-        print(len(ta_list))
+        #print(len(ta_list))
         if ta_list is None:
             await client.send_message(message.channel, "No TA's are in the cave right now!")
 
