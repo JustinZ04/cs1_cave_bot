@@ -42,7 +42,8 @@ def parse():
     time_range = None
     #  Will probably have to edit min/max row for each spreadsheet
 
-    for j in range(5, 43):
+    # Should be 43 but upper bound of range is exclusive
+    for j in range(5, 44):
        # print("here")
         cell = str(get_column_letter(1) + str(j))
        # print(cell)
@@ -78,14 +79,14 @@ def parse():
     file.write(str(stime) + "\n")
     file.close()
     for i in range(column_index_from_string((weekday_dict[weekday])[0]),
-                   column_index_from_string((weekday_dict[weekday])[1])):
-        for j in range(5, time_range):
+                   column_index_from_string((weekday_dict[weekday])[1])+1):
+        for j in range(5, time_range+1):
             col = get_column_letter(i)
             row = str(j)
             cell = "".join((col, row))
 
 
-           # print(cell)
+            print(cell)
             s = ws[cell].value
             if type(s) is not str:
                 continue
@@ -119,6 +120,7 @@ def parse():
         return None
 
     print(len(ta_list))
+    print(str(ta_list))
 
     etime = datetime.now().time()
     file = open("times.log", "a")
