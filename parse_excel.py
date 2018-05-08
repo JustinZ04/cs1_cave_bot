@@ -7,10 +7,7 @@ import re
 
 
 def parse():
-    stime = datetime.now().time()
-    file = open("times.log", "a")
-    file.write(str(stime) + "\n")
-    file.close()
+
 
     weekday_dict = {'Monday': ('B', 'Q'), 'Tuesday': ('S', 'AI'), 'Wednesday': ('AK', 'AZ'), 'Thursday': ('BB', 'BP'),
                     'Friday': ('BR', 'CH')}
@@ -18,7 +15,7 @@ def parse():
 
     ws = wb['Office Hours']  # Will have to change the name of the worksheet each time
     ta_list = []
-    print(ws['J22'].value)
+   # print(ws['J22'].value)
 
     # Get the current weekday
     day = date.today()
@@ -33,10 +30,11 @@ def parse():
     cur_time = time.localtime()
     cur_time = time.strftime("%H%M", cur_time)
     cur_time = int(cur_time)
+    cur_time = 1515
 
-    if cur_time < 900 or cur_time > 2100:
-        print("No office hours.")
-        return None
+   # if cur_time < 900 or cur_time > 2100:
+    #    print("No office hours.")
+     #   return None
 
     #  if int(cur_time) >= 1200:
     #  noon_flag = True
@@ -45,6 +43,7 @@ def parse():
     #  Will probably have to edit min/max row for each spreadsheet
 
     for j in range(5, 43):
+       # print("here")
         cell = str(get_column_letter(1) + str(j))
        # print(cell)
         if str(ws[cell].value) != "None":
@@ -72,26 +71,26 @@ def parse():
     found_ta = False
     #  Will probably have to edit this for each spreadsheet
 
-    cur_time = 1515
+   # cur_time = 1515
     seen_ta = {}
+    stime = datetime.now().time()
+    file = open("times.log", "a")
+    file.write(str(stime) + "\n")
+    file.close()
     for i in range(column_index_from_string((weekday_dict[weekday])[0]),
                    column_index_from_string((weekday_dict[weekday])[1])):
         for j in range(5, time_range):
-            cell = str(get_column_letter(i) + str(j))
+            col = get_column_letter(i)
+            row = str(j)
+            cell = "".join((col, row))
 
-            if type(ws[cell].value) is not str:
+
+           # print(cell)
+            s = ws[cell].value
+            if type(s) is not str:
                 continue
 
-            if str(ws[cell].value) != "None":
-                s = str(ws[cell].value)
 
-                if re.findall(r'Lecture', s):
-                    continue
-
-                if s in seen_ta:
-                    continue
-                else:
-                    seen_ta[s] = 1
 
 
            # print(s)
@@ -114,18 +113,18 @@ def parse():
                         ta_list.append(ws[cell].value)
                         found_ta = True
 
-
+    
     if not found_ta:
         print("No TAs have office hours at this time!")
         return None
 
     print(len(ta_list))
 
-
     etime = datetime.now().time()
     file = open("times.log", "a")
     file.write(str(etime) + "\n")
     file.close()
+
 
     return ta_list
 
