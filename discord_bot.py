@@ -27,10 +27,10 @@ async def on_message(message):
             s = '\n\n\n'.join(ta_list)
             await client.send_message(message.channel, s)
 
-    cur_time = datetime.now().time()
-    file = open("logs/commands.log", "a")
-    file.write(str(cur_time) + " Cave command typed\n")
-    file.close()
+        cur_time = datetime.now().time()
+        file = open("logs/commands.log", "a")
+        file.write(str(cur_time) + " Cave command typed\n")
+        file.close()
 
 
 client.run(config.bot_token)
