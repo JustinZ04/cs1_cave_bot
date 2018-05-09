@@ -52,9 +52,8 @@ def parse():
             s[1] = s[1].replace(" AM", "")
             s[1] = s[1].replace(" PM", "")
 
-            ##############################################################
-            # I don't really know what's going on here...
-            # Is this even necessary anymore? I don't see what it's doing.
+           # converts cur_time from 24 hour time to easily compare 
+           # against values in the time column of the spreadsheet
             if cur_time > 1259:
                 temp = cur_time - 1200
             else:
