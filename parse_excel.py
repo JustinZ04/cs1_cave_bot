@@ -11,6 +11,7 @@ from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter, column_index_from_string
 from datetime import date
 
+
 def parse():
     # Need to change tuple bounds in this dictionary to account for the new spreadsheet.
     weekday_dict = {'Monday': ('D', 'N'), 'Tuesday': ('T', 'AH'), 'Wednesday': ('AM', 'AW'), 'Thursday': ('BC', 'BO'),
@@ -52,8 +53,8 @@ def parse():
             s[1] = s[1].replace(" AM", "")
             s[1] = s[1].replace(" PM", "")
 
-           # converts cur_time from 24 hour time to easily compare 
-           # against values in the time column of the spreadsheet
+            # Converts cur_time from 24 hour time to easily compare
+            # against values in the time column of the spreadsheet.
             if cur_time > 1259:
                 temp = cur_time - 1200
             else:
