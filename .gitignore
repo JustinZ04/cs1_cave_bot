@@ -8,6 +8,9 @@ __pycache__/
 # Ignore config file
 config.py
 
+#Ignore open.py file
+open.py
+
 # Ignore download authorization file
 client_secret.json
 
