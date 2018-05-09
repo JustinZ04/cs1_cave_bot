@@ -1,18 +1,23 @@
-from openpyxl import load_workbook
-from openpyxl.utils import get_column_letter, column_index_from_string
-from datetime import date
+#!/usr/bin/env python
+
+# Finds the current day and time and uses that data to search through a spreadsheet containing the office hours of
+# TA's for the class. Returns a list of all TA's who are currently holding office hours.
+
 import time
 import calendar
 import re
 
+from openpyxl import load_workbook
+from openpyxl.utils import get_column_letter, column_index_from_string
+from datetime import date
 
 def parse():
-    # may need to change tuple bounds in this dictionary to account for the new spreadsheet
+    # Need to change tuple bounds in this dictionary to account for the new spreadsheet.
     weekday_dict = {'Monday': ('D', 'N'), 'Tuesday': ('T', 'AH'), 'Wednesday': ('AM', 'AW'), 'Thursday': ('BC', 'BO'),
                     'Friday': ('BT', 'CD')}
     wb = load_workbook(filename='office_hours.xlsx', data_only=True, read_only=True)
 
-    ws = wb['Office Hours']  # Will have to change the name of the worksheet each time
+    ws = wb['Office Hours']  # Will have to change the name of the worksheet each time.
     ta_list = []
 
     # Get the current weekday
@@ -23,19 +28,22 @@ def parse():
         print('No TAs have office hours at this time!')
         return None
 
+    # Get the current time into 24 hour integer format.
     cur_time = time.localtime()
     cur_time = time.strftime("%H%M", cur_time)
     cur_time = int(cur_time)
 
+    # Range of times on the spreadsheet. This will need to be looked at for each spreadsheet.
     if cur_time < 900 or cur_time > 2100:
         return None
 
     time_range = None
 
-    # Should be 43 but upper bound of range is exclusive
+    # Should be 43 but upper bound of range is exclusive.
     for j in range(5, 44):
         cell = str(get_column_letter(1) + str(j))
 
+        # Format the time stored in the cell to just a number.
         if str(ws[cell].value) != "None":
             s = str(ws[cell].value)
             s = s.split(' - ')
@@ -44,12 +52,14 @@ def parse():
             s[1] = s[1].replace(" AM", "")
             s[1] = s[1].replace(" PM", "")
 
+            ##############################################################
+            # I don't really know what's going on here...
+            # Is this even necessary anymore? I don't see what it's doing.
             if cur_time > 1259:
                 temp = cur_time - 1200
             else:
                 temp = cur_time
             if abs(temp - int(s[0])) < 30:
-                #  print(ws[cell].row)
                 time_range = ws[cell].row
                 break
 
@@ -59,11 +69,14 @@ def parse():
 
     found_ta = False
 
+    # Search through the spreadsheet from bottom to top, looking for the first TA for which the current time falls
+    # between their beginning and ending time. Because of the format of the spreadsheet, as soon as 1 TA is found
+    # in a column we can move 2 columns to the right.
     i = column_index_from_string((weekday_dict[weekday])[0])
     while i <= column_index_from_string((weekday_dict[weekday])[1]):
         j = time_range
 
-        while j >= 5:  # may need to change the 5 to account for lower bound of summer spreadsheet
+        while j >= 5:  # Will need to change the 5 to account for lower bound of each spreadsheet.
             col = get_column_letter(i)
             row = str(j)
             cell = "".join((col, row))
@@ -77,17 +90,20 @@ def parse():
 
             if office_hour is not None:
                 if len(office_hour) > 0:
+                    # More character replacement to get each TA's beginning and ending office hour time into
+                    # a number only format.
                     office_hour = office_hour[0].split(' - ')
 
                     office_hour[0] = int(office_hour[0].replace(":", ""))
                     office_hour[1] = int(office_hour[1].replace(":", ""))
-                    if office_hour[0] < 900:  # might need to change for new lower TA hour bound
-                        office_hour[0] = office_hour[0] + 1200
+                    if office_hour[0] < 900:  # Will need to change for new lower TA hour bound.
+                        office_hour[0] = office_hour[0] + 1200  # Add 1200 to get into 24 hour format.
 
-                    if office_hour[1] < 900:  # might need to change for new lower TA hour bound
-                        office_hour[1] = office_hour[1] + 1200
+                    if office_hour[1] < 900:  # Will need to change for new lower TA hour bound.
+                        office_hour[1] = office_hour[1] + 1200  # Add 1200 to get into 24 hour format.
 
                     if office_hour[0] <= cur_time < office_hour[1]:
+                        # Find a TA and add them to a list of current TA's.
                         ta_list.append(ws[cell].value)
                         found_ta = True
                         i += 1
@@ -102,6 +118,7 @@ def parse():
         print("No TAs have office hours at this time!")
         return None
 
+    # Return the list for use in the discord_bot script.
     return ta_list
 
 
