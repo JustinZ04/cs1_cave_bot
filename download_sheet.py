@@ -8,7 +8,6 @@ https://developers.google.com/drive/v3/web/quickstart/python
 
 import httplib2
 import os
-import time
 import config
 
 from twilio.rest import Client
@@ -72,25 +71,22 @@ def main():
     request = service.files().export_media(fileId=file_id,
                                            mimeType='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
-    #while True:
     try:
         with open('office_hours.xlsx', 'wb') as f:
             f.write(request.execute())
 
     except (ConnectionError, TimeoutError, HttpError) as e:
-         # If the download fails log it to a file with the time and type of failure.
-         # Also send a text message to the provided numbers.
+        # If the download fails log it to a file with the time and type of failure.
+        # Also send a text message to the provided numbers.
         cur_time = datetime.now().time()
         file = open("logs/download.log", "a")
         file.write(str(cur_time) + " Download Failed because" + str(e) + "\n")
         file.close()
         c = Client(config.sms_sid, config.sms_token)
         c.messages.create(body='The spreadsheet did not download because' + str(e), from_=str(+14078900127),
-                            to=config.m_phone)
+                          to=config.m_phone)
         c.messages.create(body='The spreadsheet did not download because' + str(e), from_=str(+14078900127),
-                            to=config.j_phone)
-
-       # time.sleep(60 * 60 * 6)  # Download file every 6 hours
+                          to=config.j_phone)
 
 
 if __name__ == '__main__':

@@ -26,7 +26,6 @@ def parse():
     weekday = calendar.day_name[day.weekday()]
 
     if weekday == 'Saturday' or weekday == 'Sunday':
-        print('No TAs have office hours at this time!')
         return None
 
     # Get the current time into 24 hour integer format.
@@ -64,7 +63,6 @@ def parse():
                 break
 
     if time_range is None:
-        print('No TAs have office hours at this time!')
         return None
 
     found_ta = False
@@ -115,7 +113,6 @@ def parse():
         i = i + 1
 
     if not found_ta:
-        print("No TAs have office hours at this time!")
         return None
 
     # Return the list for use in the discord_bot script.
