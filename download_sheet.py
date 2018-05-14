@@ -66,14 +66,24 @@ def main():
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('drive', 'v3', http=http)
 
-    file_id = config.cs1_file_id
+    # File ID's for the spreadsheets.
+    cs1_file_id = config.cs1_file_id
+    cs2_file_id = config.cs2_file_id
 
-    request = service.files().export_media(fileId=file_id,
-                                           mimeType='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    # Requests to export each spreadsheet.
+    cs1_request = service.files().export_media(fileId=cs1_file_id,
+                                               mimeType='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
+    cs2_request = service.files().export_media(fileId=cs2_file_id,
+                                               mimeType='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+    # Download each file and save to the current directory.
     try:
-        with open('office_hours.xlsx', 'wb') as f:
-            f.write(request.execute())
+        with open('cs1_office_hours.xlsx', 'wb') as f:
+            f.write(cs1_request.execute())
+
+        with open('cs2_office_hours.xlsx', 'wb') as f:
+            f.write(cs2_request.execute())
 
     except (ConnectionError, TimeoutError, HttpError) as e:
         # If the download fails log it to a file with the time and type of failure.

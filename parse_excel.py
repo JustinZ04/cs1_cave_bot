@@ -12,11 +12,18 @@ from openpyxl.utils import get_column_letter, column_index_from_string
 from datetime import date
 
 
-def parse():
-    # Need to change tuple bounds in this dictionary to account for the new spreadsheet.
-    weekday_dict = {'Monday': ('D', 'N'), 'Tuesday': ('T', 'AH'), 'Wednesday': ('AM', 'AW'), 'Thursday': ('BC', 'BO'),
-                    'Friday': ('BT', 'CD')}
-    wb = load_workbook(filename='office_hours.xlsx', data_only=True, read_only=True)
+# Cls will either be 1 or 2. 1 for CS1, 2 for CS2.
+def parse(cls):
+    if cls == 1:
+        # Need to change tuple bounds in this dictionary to account for the new spreadsheet.
+        weekday_dict = {'Monday': ('C', 'K'), 'Tuesday': ('O', 'U'), 'Wednesday': ('Y', 'AE'), 'Thursday': ('AI', 'AM'),
+                        'Friday': ('AS', 'AW')}
+        wb = load_workbook(filename='cs1_office_hours.xlsx', data_only=True, read_only=True)
+    else:
+        # Need to change tuple bounds in this dictionary to account for the new spreadsheet.
+        weekday_dict = {'Monday': ('C', 'D'), 'Tuesday': ('G', 'M'), 'Wednesday': ('Q', 'S'), 'Thursday': ('Y', 'AE'),
+                        'Friday': ('AJ', 'AK')}
+        wb = load_workbook(filename='cs2_office_hours.xlsx', data_only=True, read_only=True)
 
     ws = wb['Office Hours']  # Will have to change the name of the worksheet each time.
     ta_list = []
@@ -24,6 +31,10 @@ def parse():
     # Get the current weekday
     day = date.today()
     weekday = calendar.day_name[day.weekday()]
+
+    # Special case for CS2 Friday because there are no office hours held.
+    if weekday == 'Friday' and cls == 2:
+        return None
 
     if weekday == 'Saturday' or weekday == 'Sunday':
         return None
@@ -34,13 +45,28 @@ def parse():
     cur_time = int(cur_time)
 
     # Range of times on the spreadsheet. This will need to be looked at for each spreadsheet.
-    if cur_time < 900 or cur_time > 2100:
+    if (cur_time < 930 or cur_time > 2100) and cls == 1:
+        return None
+
+    if (cur_time < 1000 or cur_time > 2100) and cls == 1:
         return None
 
     time_range = None
 
-    # Should be 43 but upper bound of range is exclusive.
-    for j in range(5, 44):
+    # Set the start and end rows based on which spreadsheet is being used. Account for exclusivity of the
+    # range function on the upper bound. Also set the time of the earliest TA's office hours to use later
+    # when converting the times to 24 hour format.
+    if cls == 1:
+        start_time = 930
+        start_row = 5
+        end_row = 52
+
+    else:
+        start_time = 1000
+        start_row = 5
+        end_row = 46
+
+    for j in range(start_row, end_row):
         cell = str(get_column_letter(1) + str(j))
 
         # Format the time stored in the cell to just a number.
@@ -74,7 +100,7 @@ def parse():
     while i <= column_index_from_string((weekday_dict[weekday])[1]):
         j = time_range
 
-        while j >= 5:  # Will need to change the 5 to account for lower bound of each spreadsheet.
+        while j >= start_row:  # Will need to change to account for lower bound of each spreadsheet.
             col = get_column_letter(i)
             row = str(j)
             cell = "".join((col, row))
@@ -94,10 +120,10 @@ def parse():
 
                     office_hour[0] = int(office_hour[0].replace(":", ""))
                     office_hour[1] = int(office_hour[1].replace(":", ""))
-                    if office_hour[0] < 900:  # Will need to change for new lower TA hour bound.
+                    if office_hour[0] < start_time:  # Will need to change for new lower TA hour bound.
                         office_hour[0] = office_hour[0] + 1200  # Add 1200 to get into 24 hour format.
 
-                    if office_hour[1] < 900:  # Will need to change for new lower TA hour bound.
+                    if office_hour[1] < start_time:  # Will need to change for new lower TA hour bound.
                         office_hour[1] = office_hour[1] + 1200  # Add 1200 to get into 24 hour format.
 
                     if office_hour[0] <= cur_time < office_hour[1]:
