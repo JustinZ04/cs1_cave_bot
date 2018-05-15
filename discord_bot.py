@@ -29,7 +29,7 @@ async def on_message(message):
         if message.channel.name == 'cs1':  # Need to make sure name matches channel name of server.
             ta_list = parse(1)
 
-        if message.channel.name == 'cs2':  # Need to make sure name matches channel name of server.
+        if message.channel.name == 'cs2' or message.channel.name == 'class-discussion':  # Need to make sure name matches channel name of server.
             ta_list = parse(2)
 
         if ta_list is None:
