@@ -29,19 +29,24 @@ async def on_message(message):
     if message.content.startswith('!cave'):
         if message.channel.name == 'cs1':
             ta_list = parse(1)
+            
+            if ta_list is None:
+                await client.send_message(message.channel, "No TA's are in the cave right now!")  
+            else:
+                s = '\n\n\n'.join(ta_list)
+                await client.send_message(message.channel, s)
 
         elif message.channel.name == 'cs2' or message.channel.name == 'class-discussion':
             ta_list = parse(2)
+            
+            if ta_list is None:
+                await client.send_message(message.channel, "No TA's are in the cave right now!")
+            else:
+                s = '\n\n\n'.join(ta_list)
+                await client.send_message(message.channel, s)
 
         else:
             await client.send_message(message.channel, "The bot doesn't work in this channel!")
-
-        if ta_list is None:
-            await client.send_message(message.channel, "No TA's are in the cave right now!")
-
-        else:
-            s = '\n\n\n'.join(ta_list)
-            await client.send_message(message.channel, s)
 
         # Log every time a '!cave' command is received to a log file.
         cur_time = datetime.now().time()
