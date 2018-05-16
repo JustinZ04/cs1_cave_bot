@@ -25,12 +25,16 @@ async def on_ready():
 async def on_message(message):
     # Receives the '!cave' command and returns the current TA's holding office hours.
     # Make sure to parse the right spreadsheet, so use the channel name.
+    # Need to make sure names match channel name of server.
     if message.content.startswith('!cave'):
-        if message.channel.name == 'cs1':  # Need to make sure name matches channel name of server.
+        if message.channel.name == 'cs1':
             ta_list = parse(1)
 
-        if message.channel.name == 'cs2' or message.channel.name == 'class-discussion':  # Need to make sure name matches channel name of server.
+        elif message.channel.name == 'cs2' or message.channel.name == 'class-discussion':
             ta_list = parse(2)
+
+        else:
+            await client.send_message(message.channel, "The bot doesn't work in this channel!")
 
         if ta_list is None:
             await client.send_message(message.channel, "No TA's are in the cave right now!")

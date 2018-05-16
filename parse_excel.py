@@ -18,19 +18,19 @@ def parse(cls):
         # Need to change tuple bounds in this dictionary to account for the new spreadsheet.
         weekday_dict = {'Monday': ('C', 'K'), 'Tuesday': ('O', 'U'), 'Wednesday': ('Y', 'AE'), 'Thursday': ('AI', 'AM'),
                         'Friday': ('AS', 'AW')}
-        start_times = {'Monday': 930 , 'Tuesday': 1400, 'Wednesday': 930, 'Thursday': 1400,
-                        'Friday': 1100}
+        start_times = {'Monday': 930, 'Tuesday': 1400, 'Wednesday': 930, 'Thursday': 1400,
+                       'Friday': 1100}
         end_times = {'Monday': 1900, 'Tuesday': 1700, 'Wednesday': 1700, 'Thursday': 1700,
-                        'Friday': 1600}
+                     'Friday': 1600}
         wb = load_workbook(filename='cs1_office_hours.xlsx', data_only=True, read_only=True)
     else:
         # Need to change tuple bounds in this dictionary to account for the new spreadsheet.
         weekday_dict = {'Monday': ('C', 'D'), 'Tuesday': ('G', 'M'), 'Wednesday': ('Q', 'S'), 'Thursday': ('Y', 'AE'),
                         'Friday': ('AJ', 'AK')}
-        start_times = {'Monday': 1600 , 'Tuesday': 1300, 'Wednesday': 1200, 'Thursday': 1300,
-                        'Friday': 1000}
+        start_times = {'Monday': 1600, 'Tuesday': 1300, 'Wednesday': 1200, 'Thursday': 1300,
+                       'Friday': 1000}
         end_times = {'Monday': 1930, 'Tuesday': 1630, 'Wednesday': 1930, 'Thursday': 1630,
-                        'Friday': 1000}
+                     'Friday': 1000}
         wb = load_workbook(filename='cs2_office_hours.xlsx', data_only=True, read_only=True)
 
     ws = wb['Office Hours']  # Will have to change the name of the worksheet each time.
@@ -53,7 +53,7 @@ def parse(cls):
     cur_time = int(cur_time)
 
     # Range of times on the spreadsheet. This will need to be looked at for each spreadsheet.
-    if (cur_time < start_times[weekday] or cur_time > end_times[weekday]):
+    if cur_time < start_times[weekday] or cur_time > end_times[weekday]:
         return None
 
     time_range = None
