@@ -16,8 +16,8 @@ from datetime import date
 def parse(cls):
     if cls == 1:
         # Need to change tuple bounds in this dictionary to account for the new spreadsheet.
-        weekday_dict = {'Monday': ('C', 'K'), 'Tuesday': ('O', 'U'), 'Wednesday': ('Y', 'AE'), 'Thursday': ('AI', 'AM'),
-                        'Friday': ('AS', 'AW')}
+        weekday_dict = {'Monday': ('C', 'M'), 'Tuesday': ('Q', 'W'), 'Wednesday': ('AA', 'AG'), 'Thursday': ('AK', 'AO'),
+                        'Friday': ('AU', 'AY')}
         start_times = {'Monday': 930 , 'Tuesday': 1400, 'Wednesday': 930, 'Thursday': 1400,
                         'Friday': 1100}
         end_times = {'Monday': 1900, 'Tuesday': 1700, 'Wednesday': 1700, 'Thursday': 1700,
@@ -151,4 +151,4 @@ def parse(cls):
 
 
 if __name__ == '__main__':
-    parse(int)
+    print(parse(1))
