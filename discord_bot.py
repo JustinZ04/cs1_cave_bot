@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# Written by Matthew Villegas & Justin Zabel
 # Script to run the discord bot itself.
 # Handles logging in and receiving the correct command to run the parse script. Outputs the current TA's holding office
 # hours.
@@ -52,10 +53,11 @@ async def on_message(message):
         file.close()
 
     if message.content.startswith('!help'):
-        await client.send_message(message.channel, "This is the UCF CS Cave Bot. Available commands are:\n"
+        await client.send_message(message.channel, "This is the UCF CS Cave Bot! Available commands are:\n"
                                                    "!help: Displays this message.\n"
                                                    "!cave1: Displays the office hours for CS1 TAs.\n"
-                                                   "!cave2: Displays the office hours for CS2 TAs.\n")
+                                                   "!cave2: Displays the office hours for CS2 TAs.\n"
+                                                   "A link to source code can be found in the references channel.")
 
 # Holds the authorization token for the bot.
 client.run(config.bot_token)

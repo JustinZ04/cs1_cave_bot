@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# Written by Matthew Villegas & Justin Zabel
 # Finds the current day and time and uses that data to search through a spreadsheet containing the office hours of
 # TA's for the class. Returns a list of all TA's who are currently holding office hours.
 
@@ -16,21 +16,21 @@ from datetime import date
 def parse(cls):
     if cls == 1:
         # Need to change tuple bounds in this dictionary to account for the new spreadsheet.
-        weekday_dict = {'Monday': ('C', 'M'), 'Tuesday': ('Q', 'W'), 'Wednesday': ('AA', 'AG'), 'Thursday': ('AK', 'AO'),
-                        'Friday': ('AU', 'AY')}
-        start_times = {'Monday': 930 , 'Tuesday': 1400, 'Wednesday': 930, 'Thursday': 1400,
-                        'Friday': 1100}
+        weekday_dict = {'Monday': ('C', 'M'), 'Tuesday': ('Q', 'W'), 'Wednesday': ('AA', 'AG'),
+                        'Thursday': ('AK', 'AO'), 'Friday': ('AU', 'AY')}
+        start_times = {'Monday': 930, 'Tuesday': 1400, 'Wednesday': 930, 'Thursday': 1400,
+                       'Friday': 1100}
         end_times = {'Monday': 1900, 'Tuesday': 1700, 'Wednesday': 1700, 'Thursday': 1700,
-                        'Friday': 1600}
+                     'Friday': 1600}
         wb = load_workbook(filename='cs1_office_hours.xlsx', data_only=True, read_only=True)
     else:
         # Need to change tuple bounds in this dictionary to account for the new spreadsheet.
         weekday_dict = {'Monday': ('C', 'D'), 'Tuesday': ('G', 'M'), 'Wednesday': ('Q', 'S'), 'Thursday': ('Y', 'AE'),
                         'Friday': ('AJ', 'AK')}
-        start_times = {'Monday': 1600 , 'Tuesday': 1300, 'Wednesday': 1200, 'Thursday': 1300,
-                        'Friday': 1000}
+        start_times = {'Monday': 1600, 'Tuesday': 1300, 'Wednesday': 1200, 'Thursday': 1300,
+                       'Friday': 1000}
         end_times = {'Monday': 1930, 'Tuesday': 1630, 'Wednesday': 1930, 'Thursday': 1630,
-                        'Friday': 1000}
+                     'Friday': 1000}
         wb = load_workbook(filename='cs2_office_hours.xlsx', data_only=True, read_only=True)
 
     ws = wb['Office Hours']  # Will have to change the name of the worksheet each time.
@@ -53,7 +53,7 @@ def parse(cls):
     cur_time = int(cur_time)
 
     # Range of times on the spreadsheet. This will need to be looked at for each spreadsheet.
-    if (cur_time < start_times[weekday] or cur_time > end_times[weekday]):
+    if cur_time < start_times[weekday] or cur_time > end_times[weekday]:
         return None
 
     time_range = None
@@ -150,5 +150,6 @@ def parse(cls):
     return ta_list
 
 
+# Check cs1 hours if testing.
 if __name__ == '__main__':
     print(parse(1))
