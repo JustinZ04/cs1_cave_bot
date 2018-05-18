@@ -51,5 +51,11 @@ async def on_message(message):
         file.write(str(cur_time) + " Cave command typed\n")
         file.close()
 
+    if message.content.startswith('!help'):
+        await client.send_message(message.channel, "This is the UCF CS Cave Bot. Available commands are:\n"
+                                                   "!help: Displays this message.\n"
+                                                   "!cave1: Displays the office hours for CS1 TAs.\n"
+                                                   "!cave2: Displays the office hours for CS2 TAs.\n")
+
 # Holds the authorization token for the bot.
 client.run(config.bot_token)
