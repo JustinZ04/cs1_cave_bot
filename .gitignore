@@ -14,8 +14,9 @@ open.py
 # Ignore download authorization file
 client_secret.json
 
-#Ignore spreadsheet with data
-office_hours.xlsx
+#Ignore spreadsheets with data
+cs1_office_hours.xlsx
+cs2_office_hours.xlsx
 
 #Probably something from Pycharm
 .idea/
