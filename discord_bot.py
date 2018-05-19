@@ -9,6 +9,7 @@ import config
 
 from datetime import datetime
 from parse_excel import parse
+from twilio.rest import Client
 
 client = discord.Client()
 
@@ -58,6 +59,17 @@ async def on_message(message):
                                                    "!cave1: Displays the office hours for CS1 TAs.\n"
                                                    "!cave2: Displays the office hours for CS2 TAs.\n"
                                                    "A link to source code can be found in the references channel.")
+try:
+    # Holds the authorization token for the bot.
+    client.run(config.bot_token)
 
-# Holds the authorization token for the bot.
-client.run(config.bot_token)
+except Exception as e:
+    current_time = datetime.now().time()
+    doc = open("logs/discord_bot.log", "a")
+    doc.write(str(current_time) + e + "\n")
+    doc.close()
+    c = Client(config.sms_sid, config.sms_token)
+    c.messages.create(body='The bot could not connect to discord' + str(e), from_=str(+14078900127),
+                      to=config.m_phone)
+    c.messages.create(body='The bot could not connect to discord' + str(e), from_=str(+14078900127),
+                      to=config.j_phone)
