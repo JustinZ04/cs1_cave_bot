@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+
+# code snippet taken from http://www.videntity.com/2010/05/check-to-make-sure-a-process-is-running-and-restart-it-if-its-not-a-recipe-in-python/
 """
 Check to see if an process is running. If not, restart.
 Run this in a cron job
